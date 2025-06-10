@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@inngest/agent-kit": "^0.8.0",
+    "inngest": "^3.39.1"
+  }
+}
