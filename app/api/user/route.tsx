@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { db } from "@/configs/db";
-import { usersTable } from "@/configs/schema";
+import { db } from "@/configs/db";          // adjust the path if needed
+import { usersTable } from "@/configs/schema";  // adjust the path if needed
 import { currentUser } from "@clerk/nextjs/server";
+
 
 export async function POST(req: NextRequest) {
     try {
         const user = await currentUser();
+        console.log("Clerk user:", user);
 
         if (!user || !user.primaryEmailAddress?.emailAddress) {
             return NextResponse.json(
@@ -17,7 +19,6 @@ export async function POST(req: NextRequest) {
 
         const email = user.primaryEmailAddress.emailAddress;
 
-        // Check if user already exists
         const existingUsers = await db
             .select()
             .from(usersTable)
@@ -27,7 +28,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(existingUsers[0]);
         }
 
-        // Insert new user
         const insertedUsers = await db
             .insert(usersTable)
             .values({
@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(insertedUsers[0]);
     } catch (e: any) {
-        return NextResponse.json({ error: e.message || "Server error" }, { status: 500 });
+        console.error("Error in /api/user:", e);  // ✅ print full error
+        return NextResponse.json({ error: e.message ?? "Server error" }, { status: 500 });
     }
 }

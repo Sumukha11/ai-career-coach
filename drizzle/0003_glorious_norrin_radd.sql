@@ -1,0 +1,1 @@
+ALTER TABLE "historyTable" ADD COLUMN "metaData" varchar;

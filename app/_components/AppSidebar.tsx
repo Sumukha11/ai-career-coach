@@ -11,35 +11,36 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { BrainCircuitIcon, BriefcaseBusinessIcon, Calendar, HistoryIcon, Home, Inbox, ReceiptIcon, Search, Settings, User2Icon } from "lucide-react"
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 const items = [
     {
-        title: "Home",
-        url: "#",
-        icon: Home,
+        title: "Workspace",
+        url: "/dashboard",
+        icon: BriefcaseBusinessIcon,
     },
     {
-        title: "Inbox",
-        url: "#",
-        icon: Inbox,
+        title: "Ai-Tools",
+        url: "",
+        icon: BrainCircuitIcon,
     },
     {
-        title: "Calendar",
-        url: "#",
-        icon: Calendar,
+        title: "My History",
+        url: "/history",
+        icon: HistoryIcon,
     },
     {
-        title: "Search",
-        url: "#",
-        icon: Search,
+        title: "Billing",
+        url: "/billing",
+        icon: ReceiptIcon,
     },
     {
-        title: "Settings",
-        url: "#",
-        icon: Settings,
+        title: "Profile",
+        url: "/profile",
+        icon: User2Icon,
     },
 ]
 
@@ -49,16 +50,18 @@ export function AppSidebar() {
         <Sidebar>
             <SidebarHeader>
                 <div className='p-4'>
-                    <Image src={'./logo.svg'} alt='logo' width={100} height={100}
-                        className='w-full h-full' />
-                    <h2 className='text-sm text-gray-400 text-center'>Build Awesome</h2>
+                    <Link href="/dashboard">
+                        <Image src={'/logo.png'} alt='logo' width={100} height={70}
+                            className='w-full' />
+                    </Link>
+                    <h2 className='text-sm text-gray-400 text-center mt-3'>Build Awesome Skills</h2>
                 </div>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
 
                     <SidebarGroupContent>
-                        <SidebarMenu className='mt-5'>
+                        <SidebarMenu className='mt-2'>
                             {items.map((item, index) => (
                                 // <SidebarMenuItem key={item.title} className='p-2'>
                                 //     <SidebarMenuButton asChild className=''>
@@ -74,9 +77,7 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
-                <h2 className='p-2 text-gray-400 text-sm'>Copyright @Tubeguruji</h2>
-            </SidebarFooter>
+            
         </Sidebar>
     )
 }
