@@ -24,12 +24,12 @@ const items = [
     },
     {
         title: "Ai-Tools",
-        url: "",
+        url: "/ai-tools",
         icon: BrainCircuitIcon,
     },
     {
         title: "My History",
-        url: "/history",
+        url: "/my-history",
         icon: HistoryIcon,
     },
     {

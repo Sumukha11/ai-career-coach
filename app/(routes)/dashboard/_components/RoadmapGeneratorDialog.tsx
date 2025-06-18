@@ -15,17 +15,32 @@ import { constants } from 'buffer'
 import axios from 'axios'
 import { v4 } from 'uuid'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@clerk/nextjs'
 
 function RoadmapGeneratorDialog({openRoadmapDialog,setOpenRoadmapDialog}:any) {
   const [userInput,setUserInput]=useState<string>();
   const roadmapId=v4();
   const [loading,setLoading]=useState(false);
   const router=useRouter();
+  const {has}=useAuth();
 
   const GenerateRoadmap=async()=>{
     
     setLoading(true);
     try{
+      //@ts-ignore
+      const hasSubscriptionEnabled = await has({plan:'pro'});
+
+      if(!hasSubscriptionEnabled){
+          const resultHistory=await axios.get('/api/history');
+          const historyList=resultHistory.data;
+          const isPresent=await historyList.find((item:any)=>item?.aiAgentType=='/api/ai-roadmap-agent');
+          router.push('/billing');
+          if(isPresent){
+              return null;
+          }
+      }
+
       const result = await axios.post('/api/ai-roadmap-agent',{
         roadmapId:roadmapId,
         userInput:userInput,
