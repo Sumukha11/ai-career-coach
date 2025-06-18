@@ -241,3 +241,130 @@ export const AiResumeAgent=inngest.createFunction(
     }   
 )
 
+export const AiRoadmapGeneratorAgent=createAgent({
+    name:'AiRoadmapGeneratorAgent',
+   description:'Generates Detailed with a Tree Like Flow Roadmap',
+    system:`Generate a valid JSON output for React Flow representing a tree-structured learning roadmap for a given user input position or skills.
+
+Requirements:
+
+The layout must resemble roadmap.sh, following a clear vertical tree structure.
+
+The roadmap should start from fundamentals at the top and progress to advanced topics at the bottom.
+
+Include branching for different specializations if applicable.
+
+Node positioning (important for visibility):
+
+All nodes must have unique, non-overlapping x/y positions so that the entire roadmap is clearly visible within the React Flow canvas and minimap.
+
+Minimum horizontal spacing between sibling branches: 300px
+
+Minimum vertical spacing between levels: 200px
+
+Nodes at the same level should be horizontally aligned.
+
+Each node must include:
+
+"id": Unique string ID (e.g., "node-1")
+
+"type": "turbo"
+
+"position": { "x": <value>, "y": <value> } — follow the spacing rules strictly
+
+"data":
+
+"title": Short title of the step
+
+"description": Two-line explanation of what the step covers
+
+"link": Helpful resource URL
+
+Define edges connecting nodes:
+
+Each edge must have a unique "id" (e.g., "e1-2")
+
+Specify "source" and "target" node IDs
+
+Output format (must be valid JSON with no extra text or comments):
+{
+"roadmapTitle": "Example Roadmap",
+"description": "A 3-5 line description summarizing the learning journey from fundamentals to specialization.",
+"duration": "Estimated duration to complete the roadmap",
+"initialNodes": [
+{
+"id": "node-1",
+"type": "turbo",
+"position": { "x": 0, "y": 0 },
+"data": {
+"title": "Step Title",
+"description": "Short two-line explanation of what the step covers.",
+"link": "https://example.com"
+}
+}
+...
+],
+"initialEdges": [
+{
+"id": "e1-2",
+"source": "node-1",
+"target": "node-2"
+}
+...
+]
+}
+
+Important:
+
+Ensure that all nodes are visible in the React Flow viewport and minimap — no node should be placed outside the visible range (x between -1000 to +1000, y positive, no excessive negative x).
+
+Ensure nodes and edges have unique IDs.
+
+Space nodes so the layout is clean, easy to follow, and does not overlap at any point.
+
+Output must be valid JSON only — no extra explanations, text, or comments.
+`,
+    model:gemini({
+        model:"gemini-2.0-flash-lite",
+        apiKey: process.env.GEMINI_API_KEY
+
+})
+})
+
+export const AiRoadmapAgent=inngest.createFunction(
+    {id:'AiRoadmapAgent'},
+    {event:'AiRoadmapAgent'},
+    async({event,step})=>{
+        const {roadmapId,userInput,userEmail }=await event.data;
+
+        const roadmapResult= await AiRoadmapGeneratorAgent.run("UserInput:"+userInput)
+        // return roadmapResult
+        
+        //@ts-ignore
+        const rawContent = roadmapResult.output[0].content;
+        const rawContentJson=rawContent.replace('```json','').replace('```','');
+        const parseJson=JSON.parse(rawContentJson);
+        
+        
+        //Save to DB
+        const saveToDb=await step.run('saveToDb', async()=>{
+            if (!userEmail) {
+                throw new Error("userEmail is missing in event data");
+            }
+
+            const result=await db.insert(historyTable).values({
+                recordId:roadmapId,
+                content:parseJson,
+                aiAgentType:"/ai-tools/ai-roadmap-agent",
+                createdAt:(new Date()).toString(),
+                userEmail:userEmail,
+                metaData: userInput,
+            });
+            console.log(result);
+            return parseJson;
+        
+        })
+
+        
+    }    
+)

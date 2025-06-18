@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import ResumeUploadDialogue from './ResumeUploadDialogue'
+import RoadmapGeneratorDialog from './RoadmapGeneratorDialog'
 
 
 export interface TOOL{
@@ -25,6 +26,8 @@ function AiToolCard({tool}: AIToolProps) {
   const id=uuidv4();
   const router=useRouter();
   const [openResumeUpload, setOpenResumeUpload]=useState(false);
+  const [openRoadmapDialog,setOpenRoadmapDialog]=useState(false);
+  
   const onClickButton =async()=>{
     //Create a new record to the History table 
     
@@ -32,7 +35,10 @@ function AiToolCard({tool}: AIToolProps) {
       setOpenResumeUpload(true);
       return; 
     }
-    
+    if(tool.path=='/ai-tools/ai-roadmap-agent'){
+      setOpenRoadmapDialog(true);
+      return;
+    }
     
     const result=await axios.post('api/history',{
       recordId:id,
@@ -54,6 +60,9 @@ function AiToolCard({tool}: AIToolProps) {
 
         <ResumeUploadDialogue openResumeUpload={openResumeUpload}
         setOpenResumeDialog={setOpenResumeUpload}/>
+        <RoadmapGeneratorDialog
+        openRoadmapDialog={openRoadmapDialog} //1st openRoadmapDialog refers to the params created in RoadmapGeneratorDialog.tsx
+        setOpenRoadmapDialog={() => setOpenRoadmapDialog(false)}/>
     </div>
     
   )
