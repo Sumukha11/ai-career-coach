@@ -29,17 +29,17 @@ function RoadmapGeneratorDialog({openRoadmapDialog,setOpenRoadmapDialog}:any) {
     setLoading(true);
     try{
       //@ts-ignore
-      const hasSubscriptionEnabled = await has({plan:'pro'});
+      // const hasSubscriptionEnabled = await has({plan:'pro'});
 
-      if(!hasSubscriptionEnabled){
-          const resultHistory=await axios.get('/api/history');
-          const historyList=resultHistory.data;
-          const isPresent=await historyList.find((item:any)=>item?.aiAgentType=='/api/ai-roadmap-agent');
-          router.push('/billing');
-          if(isPresent){
-              return null;
-          }
-      }
+      // if(!hasSubscriptionEnabled){
+      //     const resultHistory=await axios.get('/api/history');
+      //     const historyList=resultHistory.data;
+      //     const isPresent=await historyList.find((item:any)=>item?.aiAgentType=='/api/ai-roadmap-agent');
+      //     router.push('/billing');
+      //     if(isPresent){
+      //         return null;
+      //     }
+      // }
 
       const result = await axios.post('/api/ai-roadmap-agent',{
         roadmapId:roadmapId,

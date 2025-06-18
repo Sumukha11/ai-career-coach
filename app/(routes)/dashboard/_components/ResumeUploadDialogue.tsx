@@ -37,17 +37,17 @@ function ResumeUploadDialogue({openResumeUpload, setOpenResumeDialog}:any) {
         formData.append('resumeFile', file);
         //formData.append('aiAgentType', '/ai-tools/ai-resume-analyzer');
         //@ts-ignore
-        const hasSubscriptionEnabled = await has({plan:'pro'});
+        // const hasSubscriptionEnabled = await has({plan:'pro'});
 
-        if(!hasSubscriptionEnabled){
-            const resultHistory=await axios.get('/api/history');
-            const historyList=resultHistory.data;
-            const isPresent=await historyList.find((item:any)=>item?.aiAgentType=='/api/ai-resume-agent');
-            router.push('/billing');
-            if(isPresent){
-                return null;
-            }
-        }
+        // if(!hasSubscriptionEnabled){
+        //     const resultHistory=await axios.get('/api/history');
+        //     const historyList=resultHistory.data;
+        //     const isPresent=await historyList.find((item:any)=>item?.aiAgentType=='/api/ai-resume-agent');
+        //     router.push('/billing');
+        //     if(isPresent){
+        //         return null;
+        //     }
+        // }
         
         //Send FormData to backend Server
         const result=await axios.post('/api/ai-resume-agent',formData)
