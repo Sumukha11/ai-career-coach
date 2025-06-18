@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs/promises";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { WebPDFLoader } from "@langchain/community/document_loaders/web/pdf";
 import { inngest } from "@/inngest/client";
 import axios from "axios";
